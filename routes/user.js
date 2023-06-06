@@ -5,19 +5,26 @@ const User = require('../models/User')
 
 router.route('/:id(\\d+)')
     // Récupération d'un utilisateur
-    .get(checkUserExist, (req, res) => {
-        res.json(req.db.users[req.params.id]);
+    .get(checkUserExist, async (req, res) => {
+        res.json(req.session.user);
     })
     // Modifier un utilisateur
-    .put(checkUserExist, (req, res) => {
-        req.db.users[req.params.id] = req.body.nom
-        res.json(`L'utilisateur ${req.db.users[req.params.id]} à été modifié`)
+    .put(checkUserExist, async (req, res) => {
+        req.session.user = await req.session.user.update(req.body)
+
+        res.json(`L'utilisateur ${req.session.user.login} à été modifié`)
     })
     // Supprimer un utilisateur
     .delete(checkUserExist, (req, res) => {
-        const user = req.db.users[req.params.id]
-        delete req.db.users[req.params.id]
-        res.json(`L'utilisateur ${user} à été supprimé`)
+        const user = req.session.user
+
+        user.delete()
+            .then(() => {
+                res.json(`L'utilisateur ${user.login} à été supprimé`)
+            })
+            .catch(err => {
+                res.status(500).json(`Erreur`)
+            })
     })
 
 router.route('/')
@@ -29,21 +36,31 @@ router.route('/')
     })
 
     // Endpoint pour créer un utilisateur
-    .post((req, res) => {
-        // Si le nom existe on l'ajoute
-        if (req.body.nom) {
-            // Création d'une instance de user
-            const new_user = new User(req.body.nom)
+    .post(async (req, res) => {
+        // Création d'une instance de user
+        const new_user = new User(req.body)
 
+        // Syntax 1
+        // new_user.create()
+        //     .then(() => {
+        //         res.status(201).json(`L'utilisateur ${req.body.nom} à été ajouté`)
+        //     })
+        //     .catch((err) => {
+        //         res.status(500).json('Erreur serveur, Echec de l\'ajout')
+        //     })
+
+        // Syntax 2
+        try {
             // Création en base de données via le model
-            new_user.create()
+            await new_user.create()
 
             // Réponse
-            res.status(201).json(`L'utilisateur ${req.body.nom} à été ajouté`)
+            res.status(201).json(`L'utilisateur ${new_user.login} à été ajouté`)
+        }
+        catch (err) {
+            console.error('Erreur dans la route', err)
 
-            // Sinon on retourne une erreur
-        } else {
-            res.status(400).json('Echec de l\'ajout')
+            res.status(500).json('Erreur serveur, Echec de l\'ajout')
         }
     })
 
