@@ -32,11 +32,13 @@ router.route('/')
     .post((req, res) => {
         // Si le nom existe on l'ajoute
         if (req.body.nom) {
-            const new_user = new User("Michel")
+            // Création d'une instance de user
+            const new_user = new User(req.body.nom)
 
-            User.create()
+            // Création en base de données via le model
+            new_user.create()
 
-            console.log(new_user)
+            // Réponse
             res.status(201).json(`L'utilisateur ${req.body.nom} à été ajouté`)
 
             // Sinon on retourne une erreur

@@ -13,8 +13,6 @@ class User {
 
                 resolve(rows)
             })
-
-            db.close()
         })
     }
 
@@ -24,7 +22,6 @@ class User {
 
     create() {
         db.run("INSERT INTO users(login) VALUES(?)", this.login)
-        db.close()
     }
 
     update() {
