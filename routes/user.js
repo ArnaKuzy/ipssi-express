@@ -22,17 +22,19 @@ router.route('/:id(\\d+)')
 
 router.route('/')
     // Récupération de la liste des utilisateurs
-    .get((req, res) => {
-        const result = User.all()
+    .get(async (req, res) => {
+        const result = await User.all()
 
         res.send(result)
     })
+
     // Endpoint pour créer un utilisateur
     .post((req, res) => {
         // Si le nom existe on l'ajoute
         if (req.body.nom) {
-            const new_user = new User(req.body.nom)
-            new_user.create()
+            const new_user = new User("Michel")
+
+            User.create()
 
             console.log(new_user)
             res.status(201).json(`L'utilisateur ${req.body.nom} à été ajouté`)

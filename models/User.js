@@ -5,29 +5,34 @@ class User {
         this.login = login
     }
 
-    static async all() {
-        const result = await db.all('SELECT * FROM users', (err, rows) => {
-            if (err)
-                return console.error(err)
+    static all() {
+        return new Promise((resolve, reject) => {
+            db.all('SELECT * FROM users', (err, rows) => {
+                if (err)
+                    reject(err)
 
-            console.log(rows)
+                resolve(rows)
+            })
 
-            return rows
+            db.close()
         })
+    }
 
-        return result;
+    static find(id) {
+        // Todo
     }
 
     create() {
-        db.serialize(() => {
-            const stmt = db.prepare("INSERT INTO users(login) VALUES(?)")
-            stmt.run(this.login)
-            stmt.finalize()
-        })
+        db.run("INSERT INTO users(login) VALUES(?)", this.login)
+        db.close()
     }
 
     update() {
-        
+        // Todo
+    }
+
+    delete() {
+        // Todo
     }
 }
 
