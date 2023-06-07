@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const checkUserExist = require('../middlewares/checkUserExist')
 const User = require('../models/User')
+const validator = require('../middlewares/validator')
 
 router.route('/:id(\\d+)')
     // Récupération d'un utilisateur
@@ -35,32 +36,35 @@ router.route('/')
     })
 
     // Endpoint pour créer un utilisateur
-    .post(async (req, res) => {
-        // Création d'une instance de user
-        const new_user = new User(req.body)
+    .post(
+        User.validation_rules(),
+        validator,
+        async (req, res) => {
+            // Création d'une instance de user
+            const new_user = new User(req.body)
 
-        // Syntax 1
-        // new_user.create()
-        //     .then(() => {
-        //         res.status(201).json(`L'utilisateur ${req.body.nom} à été ajouté`)
-        //     })
-        //     .catch((err) => {
-        //         res.status(500).json('Erreur serveur, Echec de l\'ajout')
-        //     })
+            // Syntax 1
+            // new_user.create()
+            //     .then(() => {
+            //         res.status(201).json(`L'utilisateur ${req.body.nom} à été ajouté`)
+            //     })
+            //     .catch((err) => {
+            //         res.status(500).json('Erreur serveur, Echec de l\'ajout')
+            //     })
 
-        // Syntax 2
-        try {
-            // Création en base de données via le model
-            await new_user.create()
+            // Syntax 2
+            try {
+                // Création en base de données via le model
+                await new_user.create()
 
-            // Réponse
-            res.status(201).json(`L'utilisateur ${new_user.login} à été ajouté`)
-        }
-        catch (err) {
-            console.error('Erreur dans la route', err)
+                // Réponse
+                res.status(201).json(`L'utilisateur ${new_user.login} à été ajouté`)
+            }
+            catch (err) {
+                console.error('Erreur dans la route', err)
 
-            res.status(500).json('Erreur serveur, Echec de l\'ajout')
-        }
-    })
+                res.status(500).json('Erreur serveur, Echec de l\'ajout')
+            }
+        })
 
 module.exports = router

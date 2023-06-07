@@ -4,7 +4,6 @@ const logger = require('morgan')
 
 // Création de l'app
 const app = express()
-const port = 3000
 
 // Plugins
 app.use(logger('dev'))

@@ -26,4 +26,14 @@ describe("Test the user path", () => {
                 done();
             });
     });
+
+    test("Create user fail", done => {
+        request(app)
+            .post("/user")
+            .send({})
+            .then(response => {
+                expect(response.statusCode).toBe(400);
+                done();
+            });
+    });
 });

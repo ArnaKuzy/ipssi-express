@@ -1,5 +1,6 @@
 const db = require('../databases/db');
 const Address = require('./Address');
+const { body } = require('express-validator')
 
 class User {
     static #table_name = 'users';
@@ -14,6 +15,14 @@ class User {
         this.created_at = data.created_at || null
         this.updated_at = data.updated_at || null
         this.addresses = []
+    }
+
+    static validation_rules() {
+        return [
+            body('login').notEmpty(),
+            body('password').notEmpty(),
+            body('email').notEmpty().trim().isEmail(),
+        ]
     }
 
     async get_addresses() {
