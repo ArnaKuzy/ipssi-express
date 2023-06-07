@@ -1,7 +1,10 @@
-const db = require('../databases/db')
+const db = require('../databases/db');
+const Address = require('./Address');
 
 class User {
     static #table_name = 'users';
+
+    addresses
 
     constructor(data) {
         this.id = data.id || null
@@ -10,6 +13,11 @@ class User {
         this.email = data.email || null
         this.created_at = data.created_at || null
         this.updated_at = data.updated_at || null
+        this.addresses = []
+    }
+
+    async get_addresses() {
+        this.addresses = await Address.all_for_user(this.id)
     }
 
     static all() {
@@ -20,7 +28,11 @@ class User {
                     reject(err)
 
                 users.push(new User(row))
-            }, (err) => {
+            }, async (err) => {
+                for (const user of users) {
+                    await user.get_addresses();
+                }
+
                 resolve(users)
             })
         })
@@ -40,15 +52,17 @@ class User {
 
     create() {
         return new Promise((resolve, reject) => {
-            db.run("INSERT INTO users(login, password, email) \
-                VALUES(?, ? ,?)", [this.login, this.password, this.email], (err) => {
-                if (err) {
-                    console.error(err)
-                    reject(err)
-                }
+            db.run("INSERT INTO users(login, password, email, created_at, updated_at) \
+                VALUES(?, ? ,?, strftime('%Y-%m-%d %H:%M:%S','now'), strftime('%Y-%m-%d %H:%M:%S','now'))",
+                [this.login, this.password, this.email],
+                (err) => {
+                    if (err) {
+                        console.error(err)
+                        reject(err)
+                    }
 
-                resolve()
-            })
+                    resolve()
+                })
         })
     }
 
@@ -84,11 +98,17 @@ class User {
         })
     }
 
+    /**
+     * Cette fonction est appelé par défaut l'orsque le model est convertit en 
+     * objet JSON, il nous permet de définir le schema de la Resource que nous renvoyons
+     * @returns Une ressource
+     */
     toJSON() {
         return {
             id: this.id,
             login: this.login,
             email: this.email,
+            addresses: this.addresses,
             created_at: this.created_at,
             updated_at: this.updated_at
         }

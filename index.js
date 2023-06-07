@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
 
 // Routers
 app.use('/user', require('./routes/user'))
+app.use('/address', require('./routes/address'))
 
 // Démarrage du serveur
 app.listen(port, () => {
