@@ -6,7 +6,7 @@ module.exports = async function (req, res, next) {
     if (!user)
         res.status(404).json('Cet utilisateur n\'existe pas')
     else {
-        req.session = { user: user }
+        req.session.user = user
         next()
     }
 }

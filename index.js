@@ -13,6 +13,9 @@ app.use(logger('dev'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
+// Middlewares
+app.use(require('./middlewares/session'))
+
 // Route racine
 app.get('/', (req, res) => {
     res.send('Hello World!')
