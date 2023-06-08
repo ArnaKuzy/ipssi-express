@@ -7,7 +7,7 @@ const auth = require('../middlewares/auth')
 
 router.route('/:id(\\d+)')
     // Récupération d'un utilisateur
-    .get(checkUserExist(User), async (req, res) => {
+    .get(checkUserExist, async (req, res) => {
         res.json(req.session.user);
     })
     // Modifier un utilisateur

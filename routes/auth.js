@@ -21,8 +21,6 @@ router.post('/login', async (req, res) => {
     }
     else
         res.status(400).json('Identifiants invalides')
-
-    console.log(user)
 })
 
 module.exports = router
