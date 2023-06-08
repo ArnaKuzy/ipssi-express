@@ -7,8 +7,9 @@ db.serialize(() => {
         login VARCAHR(50) NOT NULL,             \
         password VARCHAR(100) NOT NULL,         \
         email VARCHAR(100) NOT NULL UNIQUE,     \
+        session_token VARCHAR(100) UNIQUE,      \
         created_at DATETIME,                    \
-        updated_at DATETIME                      \
+        updated_at DATETIME                     \
     )")
     console.log('Table users créée')
 

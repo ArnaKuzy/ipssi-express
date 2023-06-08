@@ -3,14 +3,15 @@ const router = express.Router()
 const checkUserExist = require('../middlewares/checkUserExist')
 const User = require('../models/User')
 const validator = require('../middlewares/validator')
+const auth = require('../middlewares/auth')
 
 router.route('/:id(\\d+)')
     // Récupération d'un utilisateur
-    .get(checkUserExist, async (req, res) => {
+    .get(checkUserExist(User), async (req, res) => {
         res.json(req.session.user);
     })
     // Modifier un utilisateur
-    .put(checkUserExist, async (req, res) => {
+    .put(auth, checkUserExist, async (req, res) => {
         req.session.user = await req.session.user.update(req.body)
 
         res.json(`L'utilisateur ${req.session.user.login} à été modifié`)

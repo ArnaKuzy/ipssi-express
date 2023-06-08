@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
 })
 
 // Routers
+app.use('/', require('./routes/auth'))
 app.use('/user', require('./routes/user'))
 app.use('/address', require('./routes/address'))
 

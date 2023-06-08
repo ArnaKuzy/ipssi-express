@@ -1,4 +1,4 @@
 module.exports = function (req, res, next) {
-    res.session = {}
+    req.session = { user: null}
     next()
 }
